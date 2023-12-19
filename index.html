@@ -1,0 +1,699 @@
+<!-- Author: CabaCrD-->
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Gestión de empresas</title>
+
+</head>
+
+<body>
+
+  <header>
+  
+	<script type="text/javascript" src="indexJS.js"></script>
+	
+    <h1>Gestión de empresas</h1>
+        
+  </header>
+
+  <main>
+  
+  <script>
+  
+  var EmpresasDisponibles = [];//ARRAY DE EMPRESAS
+
+  
+  do{
+	  
+      var menuPrincipal = parseInt(prompt("\nElija una opción: "
+    		                            + "\n"  
+    		                            + "\n1.- Insertar datos automaticamente(agrega seis trabajadores y dos empresas)"
+    		                            + "\n2.- Agregar nueva empresa" //AÑADIDO MENU NUEVA EMPRESA
+    		                            + "\n3.- Insertar nuevo trabajador"
+    		                            + "\n4.- Listado de trabajadores"
+    		                            + "\n5.- Cesar a un empleado"
+    		                            + "\n6.- Cambiar de puesto a un empleado"
+    		                            + "\n7.- Cerrar el programa"));
+  
+       switch(menuPrincipal){
+       
+       case 1://AQUI SE AGREGAN LOS DATOS AUTOMATICAMENTE
+    	   
+    	   ingresarDatosAutomaticamente();
+    	   
+    	   break;
+    	   
+       case 2://AQUI AGREGAREMOS UNA NUEVA EMPRESA 
+           menuAgregarEmpresa();
+       
+    	   break;
+    	   
+       case 3://AQUI INTRODUCIMOS LOS DATOS DEL TRABAJADOR
+    	   listarEmpresas();
+    	   menuAgregarEmpleado();
+    		  
+           break;
+       
+       case 4://AQUI SE LISTAN LOS EMPLEADOS DE UNA EMPRESA
+    	   listarEmpresas();
+    	   menuListar();
+    	   
+           break;
+    	   
+       case 5://AQUI SE DESPIDE A UN EMPLEADO MEDIANTE DNI
+    	   menuCesar();
+    	   
+	       break;
+	         
+       case 6://AQUI SE CAMBIA DE PUESTO A UN EMPLEADO MEDIANTE DNI
+    	   menuCambioPuesto()
+    	   
+	       break;
+	   
+       case 7://AQUI SE CIERRA EL PROGRAMA
+    	   
+    	   alert("Ha pulsado salir, cerrando el programa");
+    	   
+    	   break; 
+    	   
+       default:  
+    	   
+    	   alert("La opción elegida no existe, para salir debe seleccionar la opción 6")
+       }
+       
+  }while(menuPrincipal !== 7);
+  
+  /******************************************************************************************************  FUNCIONES  ******************************************************************************************************/
+  
+                                             /**  ACTUALIZADO  **/
+                                             
+  /************************************ ESTA FUNCION AGREGARA EMPRESAS ************************************/
+  
+  function menuAgregarEmpresa(nomComercial, cif, direccion, telefono, administrador){	     	
+
+		alert ("A continuación se solicitará rellenar la información personal del nuevo empleado");
+		
+		/*** NOMBRE DE LA EMPRESA ***/
+		
+		
+		do {
+		  	  
+			  var nomComercial = prompt("Nombre de la empresa").toUpperCase();
+			  
+			  index=-1;
+			  
+			  var empresaEncontrada = false;
+
+			  for (var i = 0; i < EmpresasDisponibles.length; i++) {
+				  
+			    if (nomComercial === EmpresasDisponibles[i].nomComercial) {//CHECKEAMOS SI EL NOMBRE EXISTE
+			      empresaEncontrada = true;
+			      index=i			      
+			    }
+			  }
+
+			  if (empresaEncontrada) {
+			    alert("El nombre de esta empresa ya está registrado");
+			    return;
+			  }
+
+			  if (nomComercial.length === 0) {
+			    alert("Campo obligatorio");
+			  }
+
+			} while (nomComercial.length === 0 || empresaEncontrada); 
+		
+		/*** CIF ***/
+		
+		do{				
+		
+		  var cif = prompt("Introduzca el Código de Identificación Fiscal de la empresa").toUpperCase();
+		
+		  if(cif.length === 0){
+			
+			alert("Campo obligatorio");
+			
+		  }
+		
+		var checkCIF = EmpresasDisponibles.findIndex(empresa => empresa.cif === cif) === -1;//CON ESTE METODO AVERIGUAREMOS SI EL CIF YA FUE REGISTRADO
+		   
+		  if (!checkCIF) {
+			  
+		    alert("CIF no válido, ya está registrado en el sistema");
+	    
+		   }
+		
+		  if (!/^[ABCDEFGHJNPQRSUVW]{1}[0-9]{8}?$/i.test(cif)){//UNA VALIDACION BASICA DE CIF, SIMPLEMENTE COMPRUEBA EL FORMATO 
+				alert("CIF no válido, revise el formato");
+			}
+		  
+		}while(cif.length === 0 || !checkCIF || !/^[ABCDEFGHJNPQRSUVW]{1}[0-9]{8}?$/i.test(cif))
+		
+		/*** DIRECCION ***/	
+			
+		do{
+		    
+			var direccion = prompt("Introduzca la dirección física de la empresa").toUpperCase();
+			
+			if(direccion.length === 0){
+				
+			  alert("Campo obligatorio");	
+			  
+			}
+			
+		}while(direccion.length === 0)
+			
+		/*** TELEFONO ***/	
+			
+		do{
+		
+	    var telefono = prompt("Telefono");
+	    
+	    if(telefono.length === 0){	    	
+	    	alert("Campo obligatorio");	    	
+	    }	  
+	    
+	    if (!/^[6789]\d{8}$/.test(telefono)) {       			    	
+	        alert("Formato de número de teléfono incorrecto, debe de contener 9 dígitos, empezando por 6, 7, 8 o 9");	        
+	     }	    
+	    
+		} while (telefono.length === 0 || !/^[6789]\d{8}$/.test(telefono));	
+		
+		/*** ADMINISTRADOR ***/
+		
+		do{
+			
+		  var administrador = prompt("Introduzca el nombre del administrador").toUpperCase();
+			
+		  if(administrador.length === 0){
+				
+		    alert("Campo obligatorio");
+				
+			}
+			
+		}while(administrador.length === 0)
+			
+		const empresa = new Empresas(nomComercial, cif, direccion, telefono, administrador);	 	
+		 
+		 /****** CONDICIONAL ******/
+		 var confirmacion = confirm ("Nombre comercial : " + nomComercial +
+    			                     "\nCIF: " + cif +
+    			                     "\nDirección: " + direccion +
+    			                     "\nTelefono: " + telefono +
+    			                     "\nAdministrador: " + administrador +
+    			                     "\n¿Es todo correcto?");
+		 
+		 if(confirmacion == true){
+			 
+	      if(EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === nomComercial) === -1) {//SI NO ENCUENTRA EL INDEX	
+	    	 
+		    EmpresasDisponibles.push(empresa);//ALMACENA LA EMPRESA	   	    
+		    alert("Empresa " + nomComercial + " Registrada en el sistema")//MANDA MENSAJE DE CONFIRMACIÓN
+		   
+		  }else{	   		  
+			 
+		    alert("La empresa '" + nomComercial + "' no pudo ser registrada")//NO PUDO SER GUARDADA EN EL SISTEMA	   	
+		   
+		   }	
+	      
+		 }else{
+			 
+			 alert("Envio de formulario cancelado");
+			 return;
+		 }	 
+	    
+			    }
+  
+  /************************************ ESTA FUNCION AGREGARA TRABAJADORES ************************************/
+   
+  function menuAgregarEmpleado(nomComercial, dni, nombre, apellidos, fechaInco, puesto, salarioAnual, poblacion){
+
+	alert ("A continuación se solicitará rellenar la información personal del nuevo empleado");
+	
+	/****** EMPRESA ******/
+	
+  do {
+  	  
+  var nomEmpresa = prompt("Nombre de la empresa").toUpperCase();
+  
+  index=-1;
+  
+  var empresaEncontrada = false;
+
+  for (var i = 0; i < EmpresasDisponibles.length; i++) {
+	  
+    if (nomEmpresa === EmpresasDisponibles[i].nomComercial) {
+      empresaEncontrada = true;
+      index=i
+    }
+  }
+
+  if (!empresaEncontrada) {
+    alert("La empresa no existe, recuerde ingresar una empresa primero");
+    return;
+  }
+
+  if (nomEmpresa.length === 0) {
+    alert("Campo obligatorio");
+  }
+
+} while (nomEmpresa.length === 0 || !empresaEncontrada);
+		
+	/****** DNI ******/
+	
+	do{
+		
+	var dni = prompt("D.N.I").toUpperCase();
+	
+	if (dni.length == 0){//EL CAMPO NO PUEDE ESTAR VACIO
+		alert ("Campo obligatorio");  
+	  }	
+	
+	if (!/^[0-9]{8}[A-Z]{1}?$/i.test(dni)){//UNA VALIDACION BASICA DE DNI, SIMPLEMENTE COMPRUEBA EL FORMATO PERO NO VALIDA LA LETRA
+		alert("DNI no valido, revise el formato");
+	}
+			
+	 var checkDNI = EmpresasDisponibles.some(empresa => empresa.empleados.some(empleado => empleado.dni === dni));//CON ESTE METODO AVERIGUAREMOS SI EL DNI YA FUE REGISTRADO
+	  
+	 if (checkDNI) {
+		  
+	    alert("DNI no válido, ya está registrado en el sistema");
+    
+	 }
+	
+	}while(dni.length === 0 || !/^[0-9]{8}[A-Z]{1}?$/i.test(dni) || checkDNI)
+		
+	/****** NOMBRE ******/
+	
+	do{
+	
+	var nombre =  prompt("Nombre").toUpperCase();
+	
+	if (nombre.length === 0){//EL CAMPO NO PUEDE ESTAR VACIO
+		alert ("Campo obligatorio");  
+	  }
+	
+    }while(nombre.length == 0)
+    	
+	/****** APELLIDOS ******/
+	
+	do{
+		
+	var apellidos =  prompt("Apellidos").toUpperCase();
+	
+	if (apellidos.length === 0){//EL CAMPO NO PUEDE ESTAR VACIO
+		alert ("Campo obligatorio");  
+	  }
+	
+    }while(apellidos.length == 0)
+    	
+	/****** FECHA INCORPORACION ******/
+	
+	do {
+    var fechaInco = prompt("Introduzca su fecha de ingreso en la empresa en formato dd/mm/yyyy");
+  
+    var partesFecha = fechaInco.split("/");//ELIMINAMOS LA BARRA
+    var dia = parseInt(partesFecha[0]);//PASAMOS EL DIA A INT
+    var mes = parseInt(partesFecha[1]) - 1;//PASAMOS EL MES A INT Y LE RESTAMOS -1 POR EL FORMATO DE FECHAS DE JAVASCRIPT
+    var anio = parseInt(partesFecha[2]);//PASAMOS EL AÑO A INT
+    var fechaIncoCompleta = new Date(anio, mes, dia);//LA FECHA DE INCORPORACION COMPLERA
+  
+    
+    if (fechaIncoCompleta.getDate() === dia && fechaIncoCompleta.getMonth() === mes && fechaIncoCompleta.getFullYear() === anio) {//SI LA FECHA ES VALIDA...
+      fechaValida = true;
+    }
+  
+    if (!fechaValida) {//SI LA FECHA NO ES VALIDA...
+      alert("La fecha introducida no es válida");
+    }
+   
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(fechaInco)) {//PARA COMPROBAR QUE EL FORMATO ES EL CORRECTO
+      alert("Formato incorrecto");
+    }
+  
+    } while (!/^\d{2}\/\d{2}\/\d{4}$/.test(fechaInco) || !fechaValida);
+
+
+
+	
+	/****** PUESTO ******/
+	
+	do{
+		
+	var puesto = prompt("Puesto").toUpperCase();
+	
+	if (puesto.length === 0){//EL CAMPO NO PUEDE ESTAR VACIO
+		alert ("Campo obligatorio");  
+	  }
+	
+    }while(puesto.length == 0) 
+	
+	/****** SALARIO ANUAL ******/
+	
+	do{
+		
+	var salarioAnual = prompt("Salario Anual");
+	
+	
+	  if (isNaN(salarioAnual)){//COMPRUEBA QUE SEA UN NUMERO		  
+		alert ("Debes introducir un valor numérico");  		
+	  }
+	  
+	  if (salarioAnual.length === 0){//EL CAMPO NO PUEDE ESTAR VACIO
+		alert ("Campo obligatorio");  
+	  }
+	  
+	}while(isNaN(salarioAnual) || salarioAnual.length == 0)
+	
+	/****** POBLACION ******/
+	
+	do{
+		
+	var poblacion = prompt("Población").toUpperCase();
+	
+	if (poblacion.length === 0){//EL CAMPO NO PUEDE ESTAR VACIO
+		alert ("Campo obligatorio"); 		
+	  }
+	
+    }while(poblacion.length == 0)
+    
+    	/********** HORA DE AGREGAR AL NUEVO TRABAJADOR **********/
+   
+    if ( index != -1 ) {//SI SE LOCALIZO LA EMPRESA...
+    	
+    	EmpresasDisponibles[index].AgregarTrabajador(dni, nombre, apellidos, fechaInco, puesto, salarioAnual, poblacion, nomEmpresa);//LO GUARDAMOS EN EL ARRAY
+    	
+    	alert("Empleado correctamente guardado")
+    	
+            }else{
+            	
+            	alert("Hubo algún error");          	
+            }
+    }
+ 
+  /************************************ ESTA FUNCION LISTARA TRABAJADORES ************************************/
+  
+function menuListar(){
+
+/****************** NOMBRE DE LA EMPRESA ******************/ 
+	
+	 var nomEmpresa = prompt("Nombre de la empresa").toUpperCase();
+	    
+	 var empresaEncontrada = false;//INICALIZAMOS EN FALSE
+	 var arrayEmpleados = [];//EL ARRAY DONDE ALMACENAREMOS LA INFO DE LOS EMPLEADOS
+	    
+	    for (var i = 0; i < EmpresasDisponibles.length; i++) {//BUCLE PARA BUSCAR LA EMPRESA Y MOSTRAR TODA LA INFO
+	        if (nomEmpresa === EmpresasDisponibles[i].nomComercial) {
+	            empresaEncontrada = true;
+	            var empresa = EmpresasDisponibles[i];
+	            arrayEmpleados = empresa.listadoDeTrabajadores();
+	            break;
+	        }
+	    }
+	    if (!empresaEncontrada) {//SI LA EMPRESA NO EXISTE
+	        alert("La empresa no existe, recuerde ingresar una empresa primero");
+	        return;//NOS DEVUELVE AL MENU PRINCIPAL
+	    }
+	    if (arrayEmpleados.length === 0) {
+	        alert("La empresa no tiene ningún empleado contratado");
+	        return;//NOS DEVUELVE AL MENU PRINCIPAL
+	    }
+	    if (!empresaEncontrada) {
+		    alert("La empresa no existe, recuerda asignar los datos automáticamente primero");
+		    return;//NOS DEVUELVE AL MENU PRINCIPAL
+		}
+	    
+	    var suma = 0;//INICIALIZAMOS LA SUMA A 0
+	    
+	    for (var i = 0; i < arrayEmpleados.length; i++) {//BUCLE PARA RECORRER EL ARRAY
+	    	
+	      suma += parseFloat(arrayEmpleados[i].salarioAnual);//PASAMOS A FLOAT EL SALARIO Y LOS SUMAMOS TODOS
+	      
+	     } 
+	                   /**** LOS DATOS QUE SE MOSTRARAN POR PANTALLA ****/
+	    var nuevaVentana = window.open("", nomEmpresa, "width=1366,height=768");//ABRIREMOS UNA NUEVA VENTANA      
+	    
+	    nuevaVentana.document.write("<h1> DATOS DE " + nomEmpresa + " </h1>");
+	    
+	    for (var i = 0; i < arrayEmpleados.length; i++) {//BUCLE PARA MOSTRAR LOS DATOS DE TODOS LOS EMPLEADOS
+	    	
+	    	nuevaVentana.document.write("<fieldset>"); 
+	    	nuevaVentana.document.write("<p>DNI: " + arrayEmpleados[i].dni + "</p>");
+	    	nuevaVentana.document.write("<p>Nombre: " + arrayEmpleados[i].nombre + "</p>");
+	    	nuevaVentana.document.write("<p>Apellidos: " + arrayEmpleados[i].apellidos + "</p>");
+	    	nuevaVentana.document.write("<p>Fecha de incorporación: " + arrayEmpleados[i].fechaInco + "</p>");
+	    	nuevaVentana.document.write("<p>Puesto: " + arrayEmpleados[i].puesto + "</p>");
+	    	nuevaVentana.document.write("<p>Salario anual: " + arrayEmpleados[i].salarioAnual + "€</p>");
+	    	nuevaVentana.document.write("<p>Población: " + arrayEmpleados[i].poblacion + "</p>");
+	    	nuevaVentana.document.write("<p>&nbsp;</p>");
+	    	nuevaVentana.document.write("</fieldset>");
+	    }
+	        nuevaVentana.document.write("<p>Número de trabajadores: " + arrayEmpleados.length +"</p>");          
+	        nuevaVentana.document.write("<p>Coste total de nóminas: " + suma + "€</p>");
+               
+      }
+	  	  
+	  
+  
+/************************************ ESTA FUNCION ELIMINARA TRABAJADORES ************************************/
+
+function menuCesar(){	
+	
+	alert("A continuación se le solicitará el DNI del empleado que será despedido");
+	  
+	  /**** DNI ****/
+	  var dni = prompt("DNI").toUpperCase();
+	  var index = EmpresasDisponibles.findIndex(empresa => empresa.empleados.some(empleado => empleado.dni === dni));//BUSCAR EL INDICE EN EL ARRAY	  
+	  if (index < 0) {//SI NO SE ENCUENTRA EL INDICE...		  
+	    alert("DNI no registrado");
+	    return;//DEVUELVE AL MENU PRINCIPAL	    
+	  }
+	  /***** VARIABLES PARA LOS CALCULOS *****/ 
+	  var fechaAlta = EmpresasDisponibles[index].empleados.find(empleado => empleado.dni === dni).fechaInco;//BUSCAR LA FECHA DE ALTA EN EL ARRAY	  
+	  var salarioAnual = parseFloat(EmpresasDisponibles[index].empleados.find(empleado => empleado.dni === dni).salarioAnual);//BUSCAR EL SALARIO ANUAL EN EL ARRAY 		  
+	      /******** FECHA ********/
+          var partesFecha = fechaAlta.split("/");//NO SALTAMOS LA BARRITA
+          var dia = partesFecha[0];//EL DIA
+          var mes = partesFecha[1] - 1; //SE RESTA PARA AJUSTAR EL INDICE PORQUE EN JAVASCRIPT LOS MESES COMIENZA EN CERO
+          var anio = partesFecha[2];//EL AÑO
+          var fechaIncorporacionTransformada = new Date(anio, mes, dia);
+          /***********************/
+	        var hoy = new Date();
+            var milPorAnio = 1000 * 60 * 60 * 24 * 365.25; //CONTAMOS CON LOS AÑOS BISIESTOS Y LO TRANSFORMAMOS A MILISEGUNDOS
+            var aniosTotal = Math.floor((hoy - fechaIncorporacionTransformada) / milPorAnio);//CON FLOOR REDONDEAMOS Y CON LAS SIGUIENTE CU
+	      /************************/	  
+	  	  
+	  var finiquito = 0;//INICIALIZAMOS EL FINIQUITO A CERO
+	  
+	  if(aniosTotal <8){//SI TRABAJO MENOS DE 8 AÑOS...	  
+		  finiquito = (salarioAnual * 10)/100
+	  }
+	  
+      if(aniosTotal >8 && aniosTotal <18){//SI TRABAJO MAS DE 8 AÑOS Y MENOS DE 18 AÑOS...	  
+		  finiquito = (salarioAnual * 12)/100
+		  
+	  }else{//PARA LOS DEMAS	  
+	      finiquito = (salarioAnual * 10)/100
+      }
+	  
+	  EmpresasDisponibles[index].ceseTrabajador(dni);//SE EJECUTA EL METODO
+	  
+	  alert("El trabajador con DNI " + dni + " ha sido despedido " + "\n" 			  
+		     +"Después de " + aniosTotal + " años trabajados le corresponde un finiquito de " + finiquito +"€");
+	  
+	}
+  
+/*************************** ESTA FUNCION CAMBIA EL PUESTO DE LOS TRABAJADORES *******************************/
+
+function menuCambioPuesto(){	
+	
+     /*** DNI DEL EMPLEADO ***/ 		
+	 var dni = prompt("DNI").toUpperCase();	 
+	 var index = EmpresasDisponibles.findIndex(empresa => empresa.empleados.some(empleado => empleado.dni === dni));//SE RECORRE EL ARRAY PARA VER COINCIDENCIAS
+	 
+	 if (index < 0) {//SI NO SE ENCONTRO EL DNI	  
+		    alert("DNI no registrado");
+		    return;	 //DEVUELVE AL MENU PRINCIPAL	    
+		  }
+	 
+     /*** PUESTO DE TRABAJO ***/ 	 
+	 
+	 var puesto = prompt("Nuevo puesto de trabajo").toUpperCase();
+
+	 EmpresasDisponibles[index].CambioPuesto(dni, puesto);//EJECUTA EL METODO
+	 
+	 alert("Nuevo puesto asignado."
+		  +"\nAhora el empleado con DNI: " + dni + " tendra el puesto de " + puesto);
+    	    
+}
+
+/** YA QUE NO USAMOS DOS EMPRESAS PREDEFINIDAS, HE DECIDIDO CREAR UNA FUNCION QUE ABRA UNA VENTANA MOSTRANDO LAS EMPRESAS DISPONIBLES **/
+ function listarEmpresas(){
+	
+	 alert("Se abrirá una ventana mostrando las empresas registradas en el sistema")
+	 
+	 var nuevaVentana = window.open("", "Listado de empresas ", "width=1366,height=768");//ABRIREMOS UNA NUEVA VENTANA   
+	 if(EmpresasDisponibles.length === 0){
+    	 
+    	 nuevaVentana.document.write("<h1> Directorio de empresas vacío </h1>");
+    	 
+     }else{
+    	 
+	      for (var i = 0; i < EmpresasDisponibles.length; i++) {
+	    	  var empresa = EmpresasDisponibles[i]; 
+	    	  
+	         
+	        	 
+		    	    	    
+
+	    	  nuevaVentana.document.write("<fieldset>");
+	    	  nuevaVentana.document.write("<p>Nombre comercial: " + empresa.nomComercial + "</p>");
+	    	  nuevaVentana.document.write("<p>CIF: " + empresa.cif + "</p>");
+	    	  nuevaVentana.document.write("<p>Dirección: " + empresa.direccion + "</p>");
+	    	  nuevaVentana.document.write("<p>Teléfono: " + empresa.telefono + "</p>");
+	    	  nuevaVentana.document.write("<p>Administrador: " + empresa.administrador + "</p>");
+	    	  nuevaVentana.document.write("</fieldset>");
+	      }
+	        }
+			  }
+/****************** ESTA FUNCION AGREGARÁ AUTOMATICAMENTE A LOS TRABAJADORES ******************/  
+
+function ingresarDatosAutomaticamente() {
+	  
+	 /************************** EMPRESA 1 **************************/  
+	 const empresa1 = new Empresas("EMPRESA1", "B06653940", "AVENIDA EUROPA 5 MADRID", "912323234", "LUIS GOMEZ");	 	
+	 
+	 /****** CONDICIONAL ******/
+	 
+     if(EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === empresa1.nomComercial) === -1) {	
+    	 
+	   EmpresasDisponibles.push(empresa1);	   	    
+	   
+	 }else{	   		  
+		 
+	   alert("La empresa '" + empresa1.nomComercial + "' ya está registrada")	   	
+	   return
+	 }	 	 
+	/************************** EMPRESA 2 **************************/	
+	
+	 const empresa2 = new Empresas("EMPRESA2", "B06653941", "AVENIDA EUROPA 7 MADRID", "912323232", "LAURA SIMOES");
+	
+	 /****** CONDICIONAL ******/	
+	 
+	 if(EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === empresa2.nomComercial) === -1) {	
+		 
+		   EmpresasDisponibles.push(empresa2);	   	 
+		   
+		 }else{	   		
+			 
+		   alert("La empresa '" + empresa2.nomComercial + "' ya está registrada")	   
+		   return
+		 }	 
+    
+	  /****** EMPLEADO 1 EMPRESA 1******/ 
+	  
+    let index = EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === "EMPRESA1");	
+    let checkDNI = EmpresasDisponibles.some(empresa => empresa.empleados.some(empleado => empleado.dni === "09186167S"));//CON ESTE METODO AVERIGUAREMOS SI EL DNI YA FUE REGISTRADO	  
+	
+    if (checkDNI) {		  
+	    alert("DNI 09186167S, ya está registrado en el sistema");
+	    return
+	 }
+	 if ( index != -1 ) {	 
+      EmpresasDisponibles[index].AgregarTrabajador("09186167S", "JUAN JOSE", "GARCÍA CARRIÓN", "01/01/1989", "COMERCIAL", "30000", "MADRID","EMPRESA1");	 	
+	 }
+	 
+    /****** EMPLEADO 2 EMPRESA 1 ******/	
+	 index = EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === "EMPRESA1");
+	 checkDNI = EmpresasDisponibles.some(empresa => empresa.empleados.some(empleado => empleado.dni === "09186168S"));//CON ESTE METODO AVERIGUAREMOS SI EL DNI YA FUE REGISTRADO	  
+		
+	    if (checkDNI) {		  
+		    alert("DNI 09186168S, ya está registrado en el sistema"); 
+		    return
+		 }
+	 if ( index != -1 ) {
+		 
+	   EmpresasDisponibles[index].AgregarTrabajador("09186168S", "MARTA", "ARRIBAS DERECHA", "01/01/2008", "DIRECTORA", "40000", "MOSTOLES","EMPRESA1");
+	
+	 }
+    /****** EMPLEADO 3 EMPRESA 1 ******/	
+	 index = EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === "EMPRESA1");
+	 checkDNI = EmpresasDisponibles.some(empresa => empresa.empleados.some(empleado => empleado.dni === "09186169S"));//CON ESTE METODO AVERIGUAREMOS SI EL DNI YA FUE REGISTRADO	  
+		
+	    if (checkDNI) {		  
+		    alert("DNI 09186169S, ya está registrado en el sistema");
+		    return
+		 }
+	 if ( index != -1 ) {
+		 
+	   EmpresasDisponibles[index].AgregarTrabajador("09186169S", "FELIPE", "GONZÁLEZ PEREZ", "01/01/2019", "TECNICO", "15000", "PARLA", "EMPRESA1");
+	
+	 }
+	 
+    /****** EMPLEADO 1 EMPRESA 2 ******/
+    index = EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === "EMPRESA2");
+    checkDNI = EmpresasDisponibles.some(empresa => empresa.empleados.some(empleado => empleado.dni === "08186167S"));//CON ESTE METODO AVERIGUAREMOS SI EL DNI YA FUE REGISTRADO	  
+	
+    if (checkDNI) {		  
+	    alert("DNI 08186167S, ya está registrado en el sistema");
+	    return
+	 }
+	 if ( index != -1 ) {
+		 
+       EmpresasDisponibles[index].AgregarTrabajador("08186167S", "BARTOLOME", "GARCÍA CARRIÓN", "01/01/1987", "COMERCIAL", "30000", "MADRID","EMPRESA2");
+	 
+	 }
+	 
+	/****** EMPLEADO 2 EMPRESA 2 ******/
+	
+	index = EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === "EMPRESA2");
+    checkDNI = EmpresasDisponibles.some(empresa => empresa.empleados.some(empleado => empleado.dni === "08186168S"));//CON ESTE METODO AVERIGUAREMOS SI EL DNI YA FUE REGISTRADO	  
+	
+    if (checkDNI) {		  
+	    alert("DNI 08186168S, ya está registrado en el sistema");
+	    return
+	 }
+    else if ( index != -1 ) {
+      
+		EmpresasDisponibles[index].AgregarTrabajador("08186168S", "JIMENA", "ARRIBAS DERECHA", "01/01/2007", "DIRECTORA", "40000", "MOSTOLES","EMPRESA2");
+	 
+	}
+	
+	/****** EMPLEADO 3 EMPRESA 2 ******/
+		
+	index = EmpresasDisponibles.findIndex(empresa => empresa.nomComercial === "EMPRESA2");
+    checkDNI = EmpresasDisponibles.some(empresa => empresa.empleados.some(empleado => empleado.dni === "08186169S"));//CON ESTE METODO AVERIGUAREMOS SI EL DNI YA FUE REGISTRADO	  
+	
+    if (checkDNI) {		  
+	    alert("DNI 08186169S, ya está registrado en el sistema");   
+	    return
+	 }
+     else if ( index != -1 ) {
+		
+	  EmpresasDisponibles[index].AgregarTrabajador("08186169S", "LUISA", "GONZÁLEZ PEREZ", "01/01/2018", "TECNICO", "15000", "PARLA","EMPRESA2");
+	 
+	}	
+	alert("Proceso completado")
+ }	  
+
+/************************************************************************************************************************/
+
+  </script>  
+  
+  </main>
+  
+  <footer>
+  
+    <p>    </p>
+  
+  </footer>
+  
+</body>
+
+</html>
